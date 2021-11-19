@@ -118,6 +118,9 @@ class ImageConverter:
                 self.angle_data = angle_data 
                 #tw added
                 self.write_data(angle_deg)
+		#if led_position is available via ros subscription
+		cr_time=time.time()
+		self.write_data(cr_time,angle_deg)
                 
             if self.angle_data is not None:
                 cv2.imshow("raw image", self.angle_data['raw_image'])
@@ -126,8 +129,8 @@ class ImageConverter:
                 cv2.waitKey(1)
         self.file_handle.close()
     #tw added
-    def write_angle_data(self,angle_deg)
-        self.file_handle.write('%f \n'%(angle_deg))
+    def write_angle_data(self,time,angle_deg)
+        self.file_handle.write('%f %f \n'%(time,angle_deg))
         self.file_handle.flush()
 
 
