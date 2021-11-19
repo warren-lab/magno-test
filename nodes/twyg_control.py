@@ -51,7 +51,7 @@ class ImageConverter:
 
         ##tw added
         self.data_path='/home/timothy/data/'
-        self.file_name=self.data_path +time.strftime("%Y%m%d") 
+        self.file_name=self.data_path +time.strftime("%Y%m%d") + '.txt'
         self.file_handle = open(self.file_name,mode='w')
     
 
