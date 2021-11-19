@@ -48,6 +48,12 @@ class ImageConverter:
 
         self.angle_data = None
 
+        ##tw added
+        self.data_path='/home/timothy/data/'
+        self.file_name=self.data_path +time.strftime("%Y%m%d") 
+        self.file_handle = open(self.pickle_str,mode='w')
+    
+
         cv2.namedWindow('raw image')
         cv2.namedWindow('contour image')
         cv2.namedWindow('rotated image')
@@ -86,7 +92,7 @@ class ImageConverter:
 
                 self.frame_count += 1
                 cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)  
-		print('before_fly_find_angle')
+		
                 angle_rad, angle_data = find_fly_angle(cv_image_gray, self.threshold, self.mask_scale)
 
                 angle_deg = np.rad2deg(angle_rad)
@@ -109,12 +115,19 @@ class ImageConverter:
                 self.contour_image_pub.publish(contour_ros_image)
 
                 self.angle_data = angle_data 
+                #tw added
+                self.write_data(angle_deg)
                 
             if self.angle_data is not None:
                 cv2.imshow("raw image", self.angle_data['raw_image'])
                 cv2.imshow('contour image', self.angle_data['contour_image'])
                 cv2.imshow('rotated image', self.angle_data['rotated_image'])
                 cv2.waitKey(1)
+        self.file_handle.close()
+    #tw added
+    def write_angle_data(self,angle_deg)
+        self.file_handle.write('%f \n'%(angle_deg))
+        self.file_handle.flush()
 
 
 
