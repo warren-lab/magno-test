@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #modified from f-ponce magnotether_wind.py
 #by Ysabel Giraldo, Tim Warren 1.23.20
+#modified 11.19.21 to test writing to file
 
 from __future__ import print_function
 
@@ -51,7 +52,7 @@ class ImageConverter:
         ##tw added
         self.data_path='/home/timothy/data/'
         self.file_name=self.data_path +time.strftime("%Y%m%d") 
-        self.file_handle = open(self.pickle_str,mode='w')
+        self.file_handle = open(self.file_name,mode='w')
     
 
         cv2.namedWindow('raw image')
