@@ -2,6 +2,7 @@
 #modified from f-ponce magnotether_wind.py
 #by Ysabel Giraldo, Tim Warren 1.23.20
 #modified 11.19.21 to test writing to file
+#modified 11.23.21 to add rough code for subscribing to LED node
 
 from __future__ import print_function
 
@@ -12,8 +13,12 @@ import cv2
 from std_msgs.msg import Header
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
+
 from cv_bridge import CvBridge, CvBridgeError
 from datetime import datetime
+#this is message type that you will subscribe to
+from basic_led_strip_ros.msg import StripLEDInfo
+
 import os
 import os.path
 import numpy as np
@@ -37,6 +42,10 @@ class ImageConverter:
 
         self.image_sub = rospy.Subscriber("/camera_array/cam0/image_raw",Image,self.callback)
         self.angle_pub = rospy.Publisher('/angle_data', MsgAngleData, queue_size=10)
+	
+
+        rospy.Subscriber('strip_led_info', StripLEDInfo, self.led_callback)
+        
 
         self.rotated_image_pub = rospy.Publisher('/rotated_image', Image, queue_size=10)
         self.contour_image_pub = rospy.Publisher('/contour_image', Image, queue_size=10)
@@ -129,9 +138,11 @@ class ImageConverter:
                 cv2.waitKey(1)
         self.file_handle.close()
     #tw added
-    def write_angle_data(self,time,angle_deg)
-        self.file_handle.write('%f %f \n'%(time,angle_deg))
+    def write_data(self,time,angle_deg)
+        self.file_handle.write('%f %f %d \n'%(time,angle_deg, self.led_state.led_number))
         self.file_handle.flush()
+    def led_callback(self,led_info)
+	self.led_state=led_info
 
 
 
