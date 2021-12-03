@@ -125,21 +125,25 @@ class ImageConverter:
                 self.contour_image_pub.publish(contour_ros_image)
 
                 self.angle_data = angle_data 
-                #tw added
-                self.write_data(angle_deg)
-		#if led_position is available via ros subscription
+               
 		cr_time=time.time()
-		self.write_data(cr_time,angle_deg)
-                
+		try:
+			self.write_data(cr_time,angle_deg)
+                except:
+			self.write_data_with_led(cr_time,angle_deg)
+			
             if self.angle_data is not None:
                 cv2.imshow("raw image", self.angle_data['raw_image'])
                 cv2.imshow('contour image', self.angle_data['contour_image'])
                 cv2.imshow('rotated image', self.angle_data['rotated_image'])
                 cv2.waitKey(1)
         self.file_handle.close()
-    #tw added
+    
     def write_data(self,time,angle_deg)
-        self.file_handle.write('%f %f %d \n'%(time,angle_deg, self.led_state.led_number))
+        self.file_handle.write('%f %f\n'%(time,angle_deg))
+        self.file_handle.flush()
+    def write_data_with_led(self,time,angle_deg)
+        self.file_handle.write('%f %f %d\n'%(time,angle_deg, self.led_state.led_number))
         self.file_handle.flush()
     def led_callback(self,led_info)
 	self.led_state=led_info
