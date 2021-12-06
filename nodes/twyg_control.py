@@ -42,7 +42,7 @@ class ImageConverter:
 
         self.image_sub = rospy.Subscriber("/camera_array/cam0/image_raw",Image,self.callback)
         self.angle_pub = rospy.Publisher('/angle_data', MsgAngleData, queue_size=10)
-	
+
 
         rospy.Subscriber('strip_led_info', StripLEDInfo, self.led_callback)
         
@@ -59,9 +59,11 @@ class ImageConverter:
         self.angle_data = None
 
         ##tw added
+        ###You need to change self.data_path to a valid path for your filesystem
+        ###e.g. '/home/giraldolab/data/'
         self.data_path='/home/timothy/data/'
         self.file_name=self.data_path +time.strftime("%Y%m%d+%H%M%S") + '.txt'
-        self.file_handle = open(self.file_name,mode='w')
+        self.file_handle = open(self.file_name,mode='w+')
     
 
         cv2.namedWindow('raw image')
@@ -71,7 +73,7 @@ class ImageConverter:
         cv2.moveWindow('raw image', 100, 100)
         cv2.moveWindow('contour image', 110, 110)
         cv2.moveWindow('rotated image', 120, 120)
-	print('finish')
+        print('finish')
 
     def clean_up(self):
         cv2.destroyAllWindows()
@@ -92,7 +94,7 @@ class ImageConverter:
                     new_image_list.append(ros_image)
                 except Queue.Empty:
                     print('error getting image')    
-		    break
+                    break
 
             for ros_image in new_image_list:
                 try:
@@ -102,7 +104,7 @@ class ImageConverter:
 
                 self.frame_count += 1
                 cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)  
-		
+
                 angle_rad, angle_data = find_fly_angle(cv_image_gray, self.threshold, self.mask_scale)
 
                 angle_deg = np.rad2deg(angle_rad)
@@ -126,12 +128,12 @@ class ImageConverter:
 
                 self.angle_data = angle_data 
                
-		cr_time=time.time()
-		try:
-			self.write_data(cr_time,angle_deg)
-                except:
-			self.write_data_with_led(cr_time,angle_deg)
-			
+            cr_time=time.time()
+            try:
+                self.write_data(cr_time,angle_deg)
+            except:
+                self.write_data_with_led(cr_time,angle_deg)
+
             if self.angle_data is not None:
                 cv2.imshow("raw image", self.angle_data['raw_image'])
                 cv2.imshow('contour image', self.angle_data['contour_image'])
@@ -146,7 +148,7 @@ class ImageConverter:
         self.file_handle.write('%f %f %d\n'%(time,angle_deg, self.led_state.led_number))
         self.file_handle.flush()
     def led_callback(self,led_info)
-	self.led_state=led_info
+    self.led_state=led_info
 
 
 
