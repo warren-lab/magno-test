@@ -62,7 +62,7 @@ class ImageConverter:
         ###You need to change self.data_path to a valid path for your filesystem
         ###e.g. '/home/giraldolab/data/'
         self.data_path='/home/timothy/data/'
-        self.file_name=self.data_path +time.strftime("%Y%m%d+%H%M%S") + '.txt'
+        self.file_name=self.data_path +time.strftime("%Y%m%d%H%M%S") + '.txt'
         self.file_handle = open(self.file_name,mode='w+')
     
 
