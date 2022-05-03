@@ -144,7 +144,7 @@ class ImageConverter:
                 #rospy.logwarn(angle_deg)
                 self.write_data_with_led(cr_time,angle_deg)
             except:
-                rospy.logwarn('no write')
+                self.write_data(cr_time,angle_deg)
 
             if self.angle_data is not None:
                 cv2.imshow("raw image", self.angle_data['raw_image'])
@@ -154,7 +154,7 @@ class ImageConverter:
         self.file_handle.close()
     
     def write_data(self,time,angle_deg):
-        self.file_handle.write('%f %f\n'%(time,angle_deg))
+        self.file_handle.write('%f %f NaN\n'%(time,angle_deg))
         self.file_handle.flush()
     def write_data_with_led(self,time,angle_deg):
         self.file_handle.write('%f %f %d\n'%(time,angle_deg, self.led_state.led_number))
