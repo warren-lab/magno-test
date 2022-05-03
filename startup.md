@@ -1,0 +1,1 @@
+### Startup instructions for magnotether
