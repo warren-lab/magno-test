@@ -44,7 +44,7 @@ class ImageConverter:
         self.angle_pub = rospy.Publisher('/angle_data', MsgAngleData, queue_size=10)
         rospy.logwarn('subscribed')
 
-        rospy.Subscriber('strip_led_info', StripLEDInfo, self.led_callback)
+        rospy.Subscriber('/strip_led_info', StripLEDInfo, self.led_callback)
         
 
         self.rotated_image_pub = rospy.Publisher('/rotated_image', Image, queue_size=10)
@@ -82,7 +82,7 @@ class ImageConverter:
         
         self.queue.put(data)
         
-        rospy.logwarn('printing queue_size')
+        #rospy.logwarn('printing queue_size')
         #rospy.logwarn(np.shape(tst))
 
     def run(self): 
@@ -99,7 +99,7 @@ class ImageConverter:
                 try:
                     ros_image = self.queue.get_nowait()
                     new_image_list.append(ros_image)
-                    rospy.logwarn('new image')
+                    #rospy.logwarn('new image')
                 except queue.Empty:
                     #print('error getting image')    
                     break
@@ -113,8 +113,8 @@ class ImageConverter:
 
                 self.frame_count += 1
                 cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)  
-                rospy.logwarn('shape')
-                rospy.logwarn(np.shape(cv_image_gray))
+                #rospy.logwarn('shape')
+                #rospy.logwarn(np.shape(cv_image_gray))
                 angle_rad, angle_data = find_fly_angle(cv_image_gray, self.threshold, self.mask_scale)
 
                 angle_deg = np.rad2deg(angle_rad)
@@ -139,11 +139,12 @@ class ImageConverter:
                 self.angle_data = angle_data 
                
             cr_time=time.time()
+            
             try:
-                self.write_data(cr_time,angle_deg)
+                #rospy.logwarn(angle_deg)
+                self.write_data_with_led(cr_time,angle_deg)
             except:
-                tst=1
-                #print('error writing')
+                rospy.logwarn('no write')
 
             if self.angle_data is not None:
                 cv2.imshow("raw image", self.angle_data['raw_image'])
@@ -160,7 +161,7 @@ class ImageConverter:
         self.file_handle.flush()
     def led_callback(self,led_info):
         self.led_state=led_info
-
+        rospy.logwarn('getting led state')
 
 
 def main(args):
