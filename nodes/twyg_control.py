@@ -4,6 +4,10 @@
 #modified 11.19.21 to test writing to file
 #modified 11.23.21 to add rough code for subscribing to LED node
 
+# NEED TO ADD:
+### IF LED POSITION IS = to -1 then Make it NaN
+
+
 from __future__ import print_function
 
 import roslib
@@ -79,13 +83,22 @@ class ImageConverter:
         self.file_handle = open(self.file_name,mode='w+')
     
 
-        cv2.namedWindow('raw image')
-        cv2.namedWindow('contour image')
-        cv2.namedWindow('rotated image')
+        #cv2.namedWindow('raw image', cv2.WINDOW_NORMAL)
+        cv2.namedWindow('contour image', cv2.WINDOW_NORMAL)
+        #cv2.namedWindow('rotated image', cv2.WINDOW_NORMAL)
 
-        cv2.moveWindow('raw image', 100, 100)
+        # moveable window
+
+        
+        #cv2.moveWindow('raw image', 100, 100)
         cv2.moveWindow('contour image', 110, 110)
-        cv2.moveWindow('rotated image', 120, 120)
+        #cv2.moveWindow('rotated image', 120, 120)
+
+        # resize the windows
+
+        #cv2.resizeWindow('raw image',50,50)
+        cv2.resizeWindow('contour image',50,50)
+        #cv2.resizeWindow('rotated image',50,50)
         
     def clean_up(self):
         cv2.destroyAllWindows()
@@ -113,17 +126,19 @@ class ImageConverter:
 
                 try:
                     ros_image = self.queue.get_nowait()
-                    #if len(ros_image)<=5:
+                   
 
                     new_image_list.append(ros_image)
+                    rospy.logwarn(len(new_image_list))
                     if len(new_image_list)>5:
+                        #rospy.logwarn('dropping frames')
                         new_image_list=new_image_list[-2:]
 
                 except queue.Empty:
                     #print('error getting image')    
                     break
 
-            for ros_image in new_image_list:
+            for image_ct,ros_image in enumerate(new_image_list):
                 try:
                     cv_image = self.bridge.imgmsg_to_cv2(ros_image, "bgr8")
                 except CvBridgeError as e:
@@ -158,13 +173,13 @@ class ImageConverter:
 
                 self.angle_data = angle_data 
                
-            cr_time=time.time()
+                cr_time=time.time()
             
-            try:
-                rospy.logwarn(self.led_state.led_position)
-                self.current_led_position=self.led_state.led_position
-            except:
-                self.current_led_position=-100
+                try:
+                    rospy.logwarn(self.led_state.led_position)
+                    self.current_led_position=self.led_state.led_position
+                except:
+                    self.current_led_position=-100
 
 
             #rospy.logwarn(angle_deg)
@@ -173,21 +188,22 @@ class ImageConverter:
              #   self.write_data(cr_time,angle_deg)
 
             
-            if self.angle_data is not None :
-                self.write_data_with_led(cr_time,angle_deg) 
-                cv2.imshow("raw image", self.angle_data['raw_image'])
-                if cr_time-start_time<self.image_save_duration:
-                    image_save_count=image_save_count+1
-                    image_add_str=str(image_save_count).rjust(4, '0')
+                if self.angle_data is not None :
+                    self.write_data_with_led(cr_time,angle_deg) 
+                    #cv2.imshow("raw image", self.angle_data['raw_image'])
+                    if cr_time-start_time<self.image_save_duration:
+                        image_save_count=image_save_count+1
+                        image_add_str=str(image_save_count).rjust(4, '0')
 
-                    image_file_name=self.image_file_name_base + image_add_str + '.png'
-                    #rospy.logwarn(image_file_name)
-                    cv2.imwrite(self.image_path+image_file_name,self.angle_data['raw_image'])
-                    
-                cv2.imshow('contour image', self.angle_data['contour_image'])
-                cv2.imshow('rotated image', self.angle_data['rotated_image'])
-                rospy.sleep(0.001)
-                cv2.waitKey(1)
+                        image_file_name=self.image_file_name_base + image_add_str + '.png'
+                        #rospy.logwarn(image_file_name)
+                        cv2.imwrite(self.image_path+image_file_name,self.angle_data['raw_image'])
+                        
+                    if image_ct==0:
+                        cv2.imshow('contour image', self.angle_data['contour_image'])
+                    #cv2.imshow('rotated image', self.angle_data['rotated_image'])
+                        rospy.sleep(0.001)
+                        cv2.waitKey(1)
         self.file_handle.close()
     
     def write_data(self,time,angle_deg):
