@@ -10,5 +10,5 @@
 
 - to test lights <br> `rosrun basic_led_strip_ros test_service.py`
 
-- to start experiment with LEDs <br>*First* `rosrun magno_test twyg_control.py` <br> *Second* `rosrun basic_led_strip_ros Rand_led.py`
+- to start experiment with LEDs <br>*First* `rosrun magno_test twyg_control.py` <br> *Second* `rosrun basic_led_strip_ros Rand_led_node.py`
  
