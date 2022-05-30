@@ -10,5 +10,8 @@
 
 - to test lights <br> `rosrun basic_led_strip_ros test_service.py`
 
-- to start experiment with LEDs <br>*First* `rosrun magno_test twyg_control.py` <br> *Second* `rosrun basic_led_strip_ros Rand_led_node.py`
+- to start experiment with LEDs 
+   <br> `roslaunch magno_test shuffle_exp.launch` <br><br>
+The above launch file starts file writing node, twyg_control.py, **AND** the led control node, RAND_LED_node.py
+   <br> File-writing stops at end of experiment.
  
