@@ -7,6 +7,9 @@
 # NEED TO ADD:
 ### IF LED POSITION IS = to -1 then Make it NaN
 
+# convention is led position of 150 is dark
+# 149 is stop
+
 
 from __future__ import print_function
 
@@ -51,6 +54,7 @@ class ImageConverter:
         self.angle_pub = rospy.Publisher('/angle_data', MsgAngleData, queue_size=10)
         rospy.logwarn('subscribed')
 
+        self.current_led_position=-1
         rospy.Subscriber('/led_position', LEDinfo, self.led_callback)
         
 
@@ -92,8 +96,7 @@ class ImageConverter:
         
         #cv2.moveWindow('raw image', 100, 100)
         cv2.moveWindow('contour image', 110, 110)
-        #cv2.moveWindow('rotated image', 120, 120)
-
+        #cv2.moveWindow('rotated image', 120, 120)cd ~
         # resize the windows
 
         #cv2.resizeWindow('raw image',50,50)
@@ -119,17 +122,18 @@ class ImageConverter:
             # Pull all new data from queue
             new_image_list = []
            
-
+            if self.current_led_position==149:
+                break
             while True:
                 
-                
+
 
                 try:
                     ros_image = self.queue.get_nowait()
                    
 
                     new_image_list.append(ros_image)
-                    rospy.logwarn(len(new_image_list))
+                    #rospy.logwarn(len(new_image_list))
                     if len(new_image_list)>5:
                         #rospy.logwarn('dropping frames')
                         new_image_list=new_image_list[-2:]
@@ -176,10 +180,10 @@ class ImageConverter:
                 cr_time=time.time()
             
                 try:
-                    rospy.logwarn(self.led_state.led_position)
+                    #rospy.logwarn(self.led_state.led_position)
                     self.current_led_position=self.led_state.led_position
                 except:
-                    self.current_led_position=-100
+                    self.current_led_position=-1
 
 
             #rospy.logwarn(angle_deg)
@@ -190,7 +194,7 @@ class ImageConverter:
             
                 if self.angle_data is not None :
                     self.write_data_with_led(cr_time,angle_deg) 
-                    #cv2.imshow("raw image", self.angle_data['raw_image'])
+                    
                     if cr_time-start_time<self.image_save_duration:
                         image_save_count=image_save_count+1
                         image_add_str=str(image_save_count).rjust(4, '0')
@@ -204,6 +208,7 @@ class ImageConverter:
                     #cv2.imshow('rotated image', self.angle_data['rotated_image'])
                         rospy.sleep(0.001)
                         cv2.waitKey(1)
+        rospy.logwarn('closing file handle')
         self.file_handle.close()
     
     def write_data(self,time,angle_deg):
