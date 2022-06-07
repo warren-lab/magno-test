@@ -39,11 +39,40 @@ from magnotether.msg import MsgAngleData
 
 from find_fly_angle import find_fly_angle 
 
+
+
+def set_init_params():
+
+
+    rospy.logwarn('current flyname is')
+    
+    
+    rospy.logwarn(rospy.get_param('flyname','flydef'))
+
+
+    params={
+        #these initial parameters need to be set differently for different experiments
+        #'gain_x': -.5,
+       
+        'flyname':rospy.get_param('flyname','flydef'),  
+        'exec_file_name':os.path.abspath(__file__),
+        #'initpos':INITPOS
+    }
+    #rospy.logwarn(params['flyname'])
+    params['data_base_name']='/home/flyranch/data/' +time.strftime("%Y%m%d") +'/'+params['flyname']
+    params['image_data_base_name']='/home/flyranch/image_data/' +time.strftime("%Y%m%d") +'/'+params['flyname']
+    time.sleep(.1)
+
+    return(params)
+    
+
+
+
 class ImageConverter:  
 
-    def __init__(self):
+    def __init__(self,input):
 
-        
+        self.params=input
 
 
         rospy.init_node('image_converter', anonymous=True)
@@ -72,8 +101,11 @@ class ImageConverter:
         ##tw added
         ###You need to change self.data_path to a valid path for your filesystem
         ###e.g. '/home/giraldolab/data/'
-        self.data_path='/home/flyranch/data/' + time.strftime("%Y%m%d") +'/'
-        self.image_path='/home/flyranch/image_data/' + time.strftime("%Y%m%d") + '/'
+        rospy.logwarn(self.params['data_base_name'])
+
+        self.data_path=self.params['data_base_name'] +'/'
+        
+        self.image_path=self.params['image_data_base_name'] + '/'
         
         if os.path.isdir(self.data_path) is False:
             os.makedirs(self.data_path)
@@ -150,13 +182,15 @@ class ImageConverter:
                     print(e)
 
                 self.frame_count += 1
-                cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)  
-                #rospy.logwarn('shape')
+                cv_image_in = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)  
+                #rospy.logwarn(np.shape(cv_image_in))
+                red_image=cv_image_in[:,360:1560]
                 
-                angle_rad, angle_data = find_fly_angle(cv_image_gray, self.threshold, self.mask_scale)
+                angle_rad, angle_data = find_fly_angle(red_image, self.threshold, self.mask_scale)
 
                 angle_deg = np.rad2deg(angle_rad)
-                angle_data['raw_image'] = cv_image_gray
+                #rospy.logwarn(str(angle_deg))
+                angle_data['raw_image'] = red_image
 
                 rotated_ros_image = self.bridge.cv2_to_imgmsg(angle_data['rotated_image'])
                 rotated_ros_image.header = ros_image.header
@@ -222,11 +256,12 @@ class ImageConverter:
         rospy.logwarn('getting led state')
 
 
-def main(args):
-    ic = ImageConverter()
+def main(params):
+    ic = ImageConverter(params)
     ic.run()
 
 
 # ---------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    main(sys.argv)
+    params=set_init_params()
+    main(params)
