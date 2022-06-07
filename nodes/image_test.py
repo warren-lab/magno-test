@@ -2,18 +2,20 @@ import cv2
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from datetime import datetime
-
+from math import sqrt
 import matplotlib.pyplot as plt
 import matplotlib
 
+# Used Geeks for Geeks Python functions for finding the circle equation
 
 
-# function for circle drawing
-def three_circle(event, x, y, flags, params):
+circle_coords = []
+# function for coordinates
+def coord(event, x, y, flags, params):
 	"""
 	This function will check for when there is a left mouse click and save the coordinates
 
-	These coordinates will then be used to draw a circle of X thickness at the location of where there was a click
+	
 
 	x and y are the coordinates of the event
 
@@ -24,59 +26,72 @@ def three_circle(event, x, y, flags, params):
 	points specifies the number of points the user wants to create
 
 	"""
-
-	## this means that the for loop in the function will need to be run three times to create the three points
-	#points = 3
-	#count = 1
-	#coords = []
-	#while points <= 0:
-		# while loop to loop through each event...
-	#	print("Click next point")
 	if event == cv2.EVENT_LBUTTONDOWN:
 		# when this event occurs.. it is a left mouse click so this signifies point
 		print("Creating new Point...")
 		#coords.append([x,y])
 		#count+=1
-		coords = [x,y]
-
+		coord = [x,y]
+		# circle_coords.append(coord)
 		# Now Draw the Circle
 		## radius
 		radius = 10
 		## center
-		center = coords
 		## color
 		color = (0,0,255)
 		## Line Thickness
 		thickness = -1
-
+		#print(coord)
+		# print("event", events)
+		# events += 1
 		# Now using the cv2. circle method
-		image = cv2.circle(image, center_coordinates, radius, color, thickness)
+		#image = cv2.circle(image, center_coordinates, radius, color, thickness)
+		circle_coords.append(coord)
+		print(circle_coords)
+def find_coords(circle_coords):
+	"""
+	The circle coordinates will be used to compute the radius and the center of the circle
 
-		# 
-	#print(coords)
+	These were set to be equal to x1, y1, x2, y2, x3 and y3
+	"""
+	#x1, y1, x2, y2, x3, y3
+	findcirc_ls = [0,0,0,0,0,0]
+	count
+	for sub_list in np.arange(len(circle_coords)):
+		# selects the sub list
+		for inter_idx in np.arange(2):
+			# selects the idx within the list and puts it into the index of the findcirc_ls
+			findcirc_ls[inter_idx*sub_list]=circle_coords[sub_list][inter_idx]
+			count+=1
+	return findcirc_ls
 
 
-
+#This was done by using the first three points, and then running it through a 
+#These coordinates will then be used to draw a circle of X thickness at the location of where there was a click
 # image display and actual execution
-if __name__=="__main__":
+# if __name__=="__main__":
 
-	# read the image from the directory
-	img = cv2.imread("Example_image.png", cv2.IMREAD_UNCHANGED)
+# read the image from the directory
+img = cv2.imread("Example_image.png", cv2.IMREAD_UNCHANGED)
 
-	# display the image
-	cv2.imshow('example image', img)
+# display the image    
+cv2.imshow('example image', img)
 
-	# set the mouse handler for the image
-	# called the three_circles function in order to provide a means of communciation for the mouse events
-	## and what should occur on those events
-	cv2.setMouseCallback('example image', three_circle)
+# set the mouse handler for the image
+# called the three_circles function in order to provide a means of communciation for the mouse events
+## and what should occur on those events
 
-	# wait for a key to be pressed to then close the image
-	cv2.waitKey(0)
+## NEED TO FIGURE OUT HOW TO GET THISMOUSE CALL BACK TO HALT AND ALLOW OTHER PROCESSES TO OCCUR....
+cv2.setMouseCallback('example image', coord)
+	
+print(circle_coords)
+# coord = cv2.setMouseCallback('example image', coord)
+# wait for a key to be pressed to then close the image
+cv2.waitKey(0)
 
-	# after waitkey is pressed then all the images will be closed
+# after waitkey is pressed then all the images will be closed
 
-	cv2.destroyAllWindows()
+cv2.destroyAllWindows()
 
 
 
