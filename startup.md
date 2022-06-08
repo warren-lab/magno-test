@@ -10,6 +10,8 @@
 
 - to test lights <br> `rosrun basic_led_strip_ros test_service.py`
 
+- enter name of fly (e.g., fly1) in launch file <br> 'shuffle_exp.launch` and save
+
 - to start experiment with LEDs 
    <br> `roslaunch magno_test shuffle_exp.launch` <br><br>
 The above launch file starts file writing node, twyg_control.py, **AND** the led control node, RAND_LED_node.py
