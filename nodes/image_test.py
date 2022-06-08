@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from cv_bridge import CvBridge, CvBridgeError
+#from cv_bridge import CvBridge, CvBridgeError
 from datetime import datetime
 from math import sqrt
 import matplotlib.pyplot as plt
@@ -32,22 +32,15 @@ def coord(event, x, y, flags, params):
 		#coords.append([x,y])
 		#count+=1
 		coord = [x,y]
-		# circle_coords.append(coord)
-		# Now Draw the Circle
-		## radius
-		radius = 10
-		## center
-		## color
-		color = (0,0,255)
-		## Line Thickness
-		thickness = -1
-		#print(coord)
-		# print("event", events)
-		# events += 1
 		# Now using the cv2. circle method
 		#image = cv2.circle(image, center_coordinates, radius, color, thickness)
 		circle_coords.append(coord)
 		print(circle_coords)
+	
+	# Added the following since it seems like I need all functionality to occur within the buttons
+	## So this will take the circle coords list and 
+	#elif event == cv2.EVENT_RBUTTONDOWN:
+
 def find_coords(circle_coords):
 	"""
 	The circle coordinates will be used to compute the radius and the center of the circle
