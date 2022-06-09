@@ -131,29 +131,28 @@ class FlyAlign:
             # Pull all new data from queue
             new_image_list = []
            
-            if self.current_led_position==149:
-                break
-            while True:
+            # if self.current_led_position==149:
+            #     break
+            # while True:
                 
-
-
-                try:
-                    ros_image = self.queue.get_nowait()
+            try:
+                ros_image = self.queue.get_nowait()
                    
 
-                    new_image_list.append(ros_image)
-                    #rospy.logwarn(len(new_image_list))
-                    if len(new_image_list)>5:
-                        #rospy.logwarn('dropping frames')
-                        new_image_list=new_image_list[-2:]
+                new_image_list.append(ros_image)
+                #rospy.logwarn(len(new_image_list))
+                if len(new_image_list)>5:
+                    #rospy.logwarn('dropping frames')
+                    new_image_list=new_image_list[-2:]
 
-                except queue.Empty:
-                    #print('error getting image')    
-                    break
+            except queue.Empty:
+                #print('error getting image')    
+                break
 
             for image_ct,ros_image in enumerate(new_image_list):
                 try:
                     cv_image = self.bridge.imgmsg_to_cv2(ros_image, "bgr8")
+                    cv2.imshow('fly alignment', cv_image)
                      
                 except CvBridgeError as e:
                     rospy.logwarn('error')
@@ -179,19 +178,19 @@ class FlyAlign:
                 cr_time=time.time()
             
 
-                if cr_time-start_time<self.image_save_duration:
-                    image_save_count=image_save_count+1
-                    image_add_str=str(image_save_count).rjust(4, '0')
+                #if cr_time-start_time<self.image_save_duration:
+                    #image_save_count=image_save_count+1
+                    #image_add_str=str(image_save_count).rjust(4, '0')
 
-                    image_file_name=self.image_file_name_base + image_add_str + '.png'
+                    #image_file_name=self.image_file_name_base + image_add_str + '.png'
                     #rospy.logwarn(image_file_name)
-                    cv2.imwrite(self.image_path+image_file_name,self.angle_data['raw_image'])
+                    #cv2.imwrite(self.image_path+image_file_name,self.angle_data['raw_image'])
                         
-                if image_ct==0:
-                    cv2.imshow('contour image', self.angle_data['contour_image'])
+                #if image_ct==0:
+                cv2.imshow('fly alignment', cv_image)
                 #cv2.imshow('rotated image', self.angle_data['rotated_image'])
-                    rospy.sleep(0.001)
-                    cv2.waitKey(1)
+                rospy.sleep(0.001)
+                #cv2.waitKey(1)
         rospy.logwarn('closing file handle')
         self.file_handle.close()
     
