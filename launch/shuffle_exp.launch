@@ -1,7 +1,7 @@
 <launch>
     <node pkg="magno_test"  type="twyg_control.py" name='writer'/>
     <rosparam>
-        flyname: fly1
+        flyname: flytst
     </rosparam>
     />
     <node pkg="basic_led_strip_ros"  type="Rand_LED_node.py" name="led_control"/>
