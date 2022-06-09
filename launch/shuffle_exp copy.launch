@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="magno_test"  type="fly_align_node.py" name='Alignment'/>
+    <rosparam>
+        flyname: flytst
+    </rosparam>
+
+</launch>
