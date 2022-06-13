@@ -36,38 +36,11 @@ from find_fly_angle import find_fly_angle
 
 # CHANGE SOURCE FOLDER TO ONE SPECFICALLY FOR ALIGNMENT?
 ## BELOW BASICALLY WILL AUTOMATICALLY SET THE PARAMS FOR THE CURRENT FLY...
-def set_init_params():
-    """
-    This set what fly is being run, and where the fly data will be stored
-    """
-
-    rospy.logwarn('current flyname is')
-    
-    
-    rospy.logwarn(rospy.get_param('flyname','flydef'))
-
-
-    params={
-        #these initial parameters need to be set differently for different experiments
-        #'gain_x': -.5,
-       
-        'flyname':rospy.get_param('flyname','flydef'),  
-        'exec_file_name':os.path.abspath(__file__),
-        #'initpos':INITPOS
-    }
-    #rospy.logwarn(params['flyname'])
-    params['data_base_name']='/home/flyranch/data/' +time.strftime("%Y%m%d") +'/'+params['flyname']
-    params['image_data_base_name']='/home/flyranch/image_data/' +time.strftime("%Y%m%d") +'/'+params['flyname']
-    time.sleep(.1)
-
-    return(params)
 
 # New class for aligning the fruit fly initially before the experiment.
 class FlyAlign:  
 
-    def __init__(self,input):
-
-        self.params=input
+    def __init__(self):
         
         rospy.init_node('fly_align', anonymous=True)
         self.bridge = CvBridge()
@@ -87,22 +60,10 @@ class FlyAlign:
         ##tw added
         ###You need to change self.data_path to a valid path for your filesystem
         ###e.g. '/home/giraldolab/data/'
-        rospy.logwarn(self.params['data_base_name'])
-
-        self.data_path=self.params['data_base_name'] +'/'
         
-        self.image_path=self.params['image_data_base_name'] + '/'
-        
-        if os.path.isdir(self.data_path) is False:
-            os.makedirs(self.data_path)
-        if os.path.isdir(self.image_path) is False:
-            os.makedirs(self.image_path)
 
-
-        self.file_name=self.data_path +time.strftime("%Y%m%d%H%M%S") + '.txt'
-        self.image_file_name_base=time.strftime("%Y%m%d%H%M%S") + '_'
         
-        self.file_handle = open(self.file_name,mode='w+')
+        
     
         # Set the window for the continuously updating images..
         cv2.namedWindow('fly alignment', cv2.WINDOW_NORMAL)
@@ -135,28 +96,35 @@ class FlyAlign:
             #     break
             # while True:
                 
-            try:
-                ros_image = self.queue.get_nowait()
-                   
+            
+            while(True):
+
+                #try:
+                ros_image = self.queue.get()
 
                 new_image_list.append(ros_image)
                 #rospy.logwarn(len(new_image_list))
                 if len(new_image_list)>5:
-                    #rospy.logwarn('dropping frames')
+                #rospy.logwarn('dropping frames')
                     new_image_list=new_image_list[-2:]
 
-            except queue.Empty:
-                #print('error getting image')    
-                break
+                #except queue.Empty:
+                    #rospy.logwarn('re')
+                    #print('error getting image')    
+                 #   break
 
             for image_ct,ros_image in enumerate(new_image_list):
-                try:
-                    cv_image = self.bridge.imgmsg_to_cv2(ros_image, "bgr8")
-                    cv2.imshow('fly alignment', cv_image)
+                rospy.logwarn('inside image loop')
+                # try:
+                cv_image = self.bridge.imgmsg_to_cv2(ros_image, "bgr8")
+                #     cv2.imshow('fly alignment', cv_image)
+                #     rospy.logwarn('showing alignment image')
+                #     rospy.sleep(0.001)
+                #     cv2.waitKey(1)
                      
-                except CvBridgeError as e:
-                    rospy.logwarn('error')
-                    print(e)
+                # except CvBridgeError as e:
+                #     rospy.logwarn('error')
+                #     print(e)
 
                 self.frame_count += 1
 
@@ -190,17 +158,13 @@ class FlyAlign:
                 cv2.imshow('fly alignment', cv_image)
                 #cv2.imshow('rotated image', self.angle_data['rotated_image'])
                 rospy.sleep(0.001)
-                #cv2.waitKey(1)
-        rospy.logwarn('closing file handle')
-        self.file_handle.close()
-    
-
-def main(params):
-    ic =FlyAlign(params)
-    ic.run()
+                cv2.waitKey(1)
 
 
 # ---------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    params=set_init_params()
-    main(params)
+    test= FlyAlign()
+    try:
+        test.run()
+    except rospy.ROSInterruptException:
+        sys.exit()

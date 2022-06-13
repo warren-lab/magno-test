@@ -48,6 +48,7 @@ def set_init_params():
 
     rospy.logwarn('current flyname is')
     
+    #this references a global parameter set in launch...
     
     rospy.logwarn(rospy.get_param('flyname','flydef'))
 
