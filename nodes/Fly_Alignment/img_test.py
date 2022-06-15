@@ -37,7 +37,9 @@ class FlyAlign:
         This function will put the image message into the queue that was set up
         """
         # Add the image message into the queue
+        print(msg)
         self.que_img_msg.put(msg)
+        print(len(self.que_img_msg))
     
     def display(self, img):
         print("New WINDOW")
