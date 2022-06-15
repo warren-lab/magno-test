@@ -10,7 +10,7 @@ import sys
 import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-import Queue
+import queue
 #import multiprocessing as mp
 class FlyAlign:  
     def __init__(self):
