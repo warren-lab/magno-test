@@ -5,12 +5,9 @@
 
 # Will be utilizing the image data recived from the pylon camera ros node
 import rospy
-
 import sys
 import cv2
-
 from sensor_msgs.msg import Image
-
 from cv_bridge import CvBridge, CvBridgeError
 
 class FlyAlign:  
@@ -22,22 +19,24 @@ class FlyAlign:
         # created the subscriber object
         self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image, self.align)
     
-    def align(self,msg):
+    def display(self):
+        cv2.imshow("Window", self.image_sub)
+        cv2.waitKey(1)
+    def align(self,Image):
         try:
-            aligned_img = self.bridge.imgmsg_to_cv2(msg,"bgr8")
-            cv2.imshow('example image', aligned_img)
+            self.img = self.bridge.imgmsg_to_cv2(Image,"bgr8")
         except CvBridgeError as e:
             rospy.logerr(e)
             return
+        self.display(self.img)
 
         #print("hellow")
-    def run(self):
-        cv2.imshow("cv image", self.aligned_img)
-        #self.cv_image = self.bridge.imgmsg_to_cv2(image, "bgr8")
-        cv2.waitKey(1)
+    # def run(self):
+    #     #self.cv_image = self.bridge.imgmsg_to_cv2(image, "bgr8")
+    #     cv2.waitKey(1)
 if __name__=='main':
     flyalignment = FlyAlign()
     try: 
-        flyalignment.run()
+        flyalignment.align()
     except rospy.ROSInterruptException:
         cv2.destroyAllWindows()
