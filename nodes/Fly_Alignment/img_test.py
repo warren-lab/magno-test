@@ -20,7 +20,7 @@ class FlyAlign:
         self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image, self.align)
     
     def display(self):
-        cv2.imshow("Window", self.image_sub)
+        cv2.imshow("Window", self.img)
         cv2.waitKey(1)
     def align(self,Image):
         try:
