@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # Node to test functionality of viewing an image within ROS
-## By Logan Rower
 ## Referenced Dickison Lab
 
 # Will be utilizing the image data recived from the pylon camera ros node
@@ -24,6 +23,13 @@ class FlyAlign:
         # Created the Queue where the image messages would be stored
         self.que_img_msg = queue.Queue()
 
+        #
+        cv2.namedWindow('align image', cv2.WINDOW_NORMAL)
+        # moveable window
+        cv2.moveWindow('align image', 110, 110)
+        # resize the windows
+        cv2.resizeWindow('align image',50,50)
+
     def img_callback(self, msg):
         """
         This callback function is referenced by the subscriber
@@ -35,7 +41,7 @@ class FlyAlign:
     
     def display(self, img):
         print("New WINDOW")
-        cv2.imshow("Window", img)
+        cv2.imshow('align image', img)
         cv2.waitKey(1)
     # def align(self,Image):
     #     try:
@@ -60,7 +66,7 @@ class FlyAlign:
                 # within the while loop we know that there are image messages
                 # Use get() to get the first message in
                 img_msg = self.que_img_msg.get()
-            if img_msg == NONE:
+            if img_msg is NONE:
                 continue
             
             # Now process the image through the alignment..
