@@ -16,10 +16,10 @@ class FlyAlign:
         # started the node...
         rospy.init_node('fly_align', anonymous=True)
         self.bridge = CvBridge()
-
+        rospy.on_shutdown(self.clean_up)
         # created the subscriber object
         self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image, self.align)
-
+        rospy.logwarn("subscribed")
         # Created the Queue where the image messages would be stored
         self.que_img_msg = queue.Queue()
 
@@ -84,7 +84,7 @@ class FlyAlign:
     #     cv2.waitKey(1)
 if __name__=='main':
     flyalignment = FlyAlign()
-    try: 
-        flyalignment.run_alignment()
-    except rospy.ROSInterruptException:
-        cv2.destroyAllWindows()
+    #try: 
+    flyalignment.run_alignment()
+    #except rospy.ROSInterruptException:
+    #    cv2.destroyAllWindows()
