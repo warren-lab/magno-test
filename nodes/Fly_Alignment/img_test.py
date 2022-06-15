@@ -22,7 +22,7 @@ class FlyAlign:
         self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image, self.align)
 
         # Created the Queue where the image messages would be stored
-        self.que_img_msg = Queue.Queue()
+        self.que_img_msg = queue.Queue()
 
     def img_callback(self, msg):
         """
