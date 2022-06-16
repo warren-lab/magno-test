@@ -18,7 +18,7 @@ class FlyAlign:
         self.bridge = CvBridge()
         rospy.on_shutdown(self.clean_up)
         # created the subscriber object
-        self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image, self.align)
+        self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image, self.img_callback)
         rospy.logwarn("subscribed")
         # Created the Queue where the image messages would be stored
         self.que_img_msg = queue.Queue()
@@ -61,23 +61,32 @@ class FlyAlign:
         """
         while not rospy.is_shutdown():
             # Initially set the image message to be none
-            img_msg = NONE
+            #img_msg = NONE
             # while loop will check to see if there is anything in the queue
             ## the loop will continue to run as long as there are image messages within the queue
-            while self.que_img_msg.qsize()>0:
-                # within the while loop we know that there are image messages
-                # Use get() to get the first message in
-                img_msg = self.que_img_msg.get()
-            if img_msg is NONE:
-                continue
-            
-            # Now process the image through the alignment..
+            while True:
+                while self.que_img_msg.qsize()>0:
+                    # within the while loop we know that there are image messages
+                    # Use get() to get the first message in
+                    img_msg = self.que_img_msg.get()
+                # Now determine if the Queue is empty...
+                if self.que_img_msg.empty():
+                    continue
+                
+                # Now process the image through the alignment..
             try:
                cv_img = self.cv_bridge.imgmsg_to_cv2(img_msg, desired_encoding="passthrough")
+               cv2.imshow('raw image',cv_image)
+               #cv2.imshow('rotated image', self.angle_data['rotated_image'])
+               rospy.sleep(0.001)
+               cv2.waitKey(1)
             except CvBridgeError as e:
                 rospy.logwarn(str(e))
-            
-            self.display(self, cv_img)
+
+
+
+                
+                self.display(self, cv_img)
         #print("hellow")
     # def run(self):
     #     #self.cv_image = self.bridge.imgmsg_to_cv2(image, "bgr8")
