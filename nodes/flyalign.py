@@ -376,6 +376,7 @@ class ImageConverter:
                     # Draw concentric Circles of decreasing radius..
                     ## 5 concentric circles so divide radius by /2 5 times
                     circle_array = np.arange(1,6)
+                    cv2.circle(self.cv_image, self.ctr_crd, radius, self.main_color, self.thickness)
                     for circle in circle_array:
                         ## 
                         radius = radius //2
