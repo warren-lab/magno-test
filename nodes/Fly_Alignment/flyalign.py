@@ -50,7 +50,7 @@ from find_fly_angle import find_fly_angle
 import math
 
 
-class ImageConverter:  
+class FlyAlign:  
 
     def __init__(self):
 
@@ -232,14 +232,6 @@ class ImageConverter:
     def K(self):
         K_value = ((self.midpoint()[1][0]))+(self.slope()[1])*self.midpoint()[1][1]
         return K_value
-    # def perp_slope():
-    #   perp_m1 = -1* (1/(slope()[0]))
-    #   perp_m2 = -1* (1/(slope()[1]))
-    #   perpslopes = [perp_m1,perp_m2]
-    #   return perpslopes
-
-
-
 
 ################################################
     def run(self): 
@@ -310,61 +302,7 @@ class ImageConverter:
                         print(e)
 
                 self.frame_count += 1
-                cv_image_in = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)  
-                #rospy.logwarn(np.shape(cv_image_in))
-                # red_image=cv_image_in[:,360:1560]
-                
-                # angle_rad, angle_data = find_fly_angle(red_image, self.threshold, self.mask_scale)
-
-                # angle_deg = np.rad2deg(angle_rad)
-                # #rospy.logwarn(str(angle_deg))
-                # angle_data['raw_image'] = red_image
-
-                # rotated_ros_image = self.bridge.cv2_to_imgmsg(angle_data['rotated_image'])
-                # rotated_ros_image.header = ros_image.header
-                
-                # contour_ros_image = self.bridge.cv2_to_imgmsg(angle_data['contour_image'])
-                # contour_ros_image.header = ros_image.header
-                
-                # msg_angle_data = MsgAngleData()
-                # msg_angle_data.header.stamp = ros_image.header.stamp
-                # msg_angle_data.frame = self.frame_count
-                # msg_angle_data.angle = angle_deg
-                # msg_angle_data.rotated_image = rotated_ros_image
-                # self.angle_pub.publish(msg_angle_data) 
-
-                
-                #self.rotated_image_pub.publish(rotated_ros_image)
-                #self.contour_image_pub.publish(contour_ros_image)
-
-                # self.angle_data = angle_data 
-               
-                # cr_time=time.time()
-            
-                # try:
-                #     #rospy.logwarn(self.led_state.led_position)
-                #     self.current_led_position=self.led_state.led_position
-                # except:
-                #     self.current_led_position=-1
-
-
-            #rospy.logwarn(angle_deg)
-            
-            #ex
-             #   self.write_data(cr_time,angle_deg)
-
-            
-                # if self.angle_data is not None :
-                #     self.write_data_with_led(cr_time,angle_deg) 
-                    
-                    # if cr_time-start_time<self.image_save_duration:
-                        # image_save_count=image_save_count+1
-                        # image_add_str=str(image_save_count).rjust(4, '0')
-
-                        # image_file_name=self.image_file_name_base + image_add_str + '.png'
-                        # #rospy.logwarn(image_file_name)
-                        # cv2.imwrite(self.image_path+image_file_name,self.angle_data['raw_image'])
-                        
+                cv_image_in = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)                  
                 if image_ct==0:
 
                     # Reference the function that will essentially plot the points... 
@@ -386,26 +324,7 @@ class ImageConverter:
                         #cv2.imshow('rotated image', self.angle_data['rotated_image'])
                     rospy.sleep(0.001)
                     cv2.waitKey(1)
-            #rospy.logwarn('closing file handle')
-        # self.file_handle.close()
-    
-    # def write_data(self,time,angle_deg):
-    #     self.file_handle.write('%f %f NaN\n'%(time,angle_deg))
-    #     self.file_handle.flush()
-    # def write_data_with_led(self,time,angle_deg):
-    #     self.file_handle.write('%f %f %d\n'%(time,angle_deg, self.current_led_position))
-    #     self.file_handle.flush()
-    # def led_callback(self,led_info):
-    #     self.led_state=led_info
-    #     rospy.logwarn('getting led state')
-
-
-# def main(params):
-#     ic = ImageConverter(params)
-#     ic.run()
-
-
 # ---------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    ic = ImageConverter()
-    ic.run()
+    flyalignment = FlyAlign()
+    flyalignment.run()
