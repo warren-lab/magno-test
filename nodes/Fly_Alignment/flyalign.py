@@ -1,21 +1,34 @@
 #!/usr/bin/env python3
-#modified from f-ponce magnotether_wind.py
-#by Ysabel Giraldo, Tim Warren 1.23.20
-#modified 11.19.21 to test writing to file
-#modified 11.23.21 to add rough code for subscribing to LED node
-#modified 5.27.22 for new addition with the LED_Rand Script and added functionality
-#modified 5.30.22 Tim Warren Queue 
-# convention is led position of 150 is dark
-# 149 is stop
-
-
-# THIS WORKS FOR SHOWCASING THE RAW IMAGE THAT IS UPDATING!!
-## NEED TO GET THIS TO WORK MAYBE TEST WITH queues?
-
-
-# FLY ALIGNMENT CONTROL NODE!!!
-# Developed by Logan Rower
+# FLY ALIGNMENT CONTROL NODE
+## Developed by Logan Rower
 ## Referenced work by the Giraldo and Dickinson Lab
+"""
+This script will generate concentric circles that can be utilized in 
+aligning the position of the fly.
+
+This script can be run with the following command:
+    
+    rosrun magno_test flyalign.py
+"""
+
+# HOW THIS SCRIPT WORKS:
+"""
+After running the above command to run the script
+a pop of of the first image taken will appear. 
+The user will then be directed to input three point.
+
+It  is important to note that more points can be selected
+
+However, the first three points that the user selects are 
+what will be used by this program in order to generate the 
+center coordinates and radius for the outer circle and the 
+concentric circles. 
+
+After this point the user can then press any key while still on 
+the image in order to exit. This will then generate the same window 
+with a continuously updating image with the appropriate circles drawn.
+
+"""
 
 
 from __future__ import print_function
@@ -61,58 +74,9 @@ class FlyAlign:
         self.image_sub = rospy.Subscriber("/pylon_camera_node/image_raw",Image,self.callback)
         rospy.logwarn('subscribed')
 
-        # self.current_led_position=-1
-        # rospy.Subscriber('/led_position', LEDinfo, self.led_callback)
-        
-
-        # self.rotated_image_pub = rospy.Publisher('/rotated_image', Image, queue_size=10)
-        # self.contour_image_pub = rospy.Publisher('/contour_image', Image, queue_size=10)
-
         self.queue = queue.Queue()
 
-        # self.threshold = 50
-        # self.mask_scale = 0.9
         self.frame_count = 0
-        # self.image_save_duration=60
-        # self.angle_data = None
-
-        # ##tw added
-        # ###You need to change self.data_path to a valid path for your filesystem
-        # ###e.g. '/home/giraldolab/data/'
-        # rospy.logwarn(self.params['data_base_name'])
-
-        # self.data_path=self.params['data_base_name'] +'/'
-        
-        # self.image_path=self.params['image_data_base_name'] + '/'
-        
-        # if os.path.isdir(self.data_path) is False:
-        #     os.makedirs(self.data_path)
-        # if os.path.isdir(self.image_path) is False:
-        #     os.makedirs(self.image_path)
-
-
-        # self.file_name=self.data_path +time.strftime("%Y%m%d%H%M%S") + '.txt'
-        # self.image_file_name_base=time.strftime("%Y%m%d%H%M%S") + '_'
-        
-        # self.file_handle = open(self.file_name,mode='w+')
-    
-
-        #cv2.namedWindow('raw image', cv2.WINDOW_NORMAL)
-        #cv2.namedWindow('contour image', cv2.WINDOW_NORMAL)
-        #cv2.namedWindow('rotated image', cv2.WINDOW_NORMAL)
-
-        # moveable window
-
-        
-        #cv2.moveWindow('raw image', 100, 100)
-        #cv2.moveWindow('contour image', 110, 110)
-        #cv2.moveWindow('rotated image', 120, 120)cd ~
-        # resize the windows
-
-        #cv2.resizeWindow('raw image',50,50)
-        #cv2.resizeWindow('contour image',50,50)
-        #cv2.resizeWindow('rotated image',50,50)
-
 
         # IN THEORY FOR CIRCLE:
         ## Need to essentially save the information from the first test image
@@ -120,7 +84,6 @@ class FlyAlign:
         ## the iniitalized variables refereced in the init..
         ## this will allow these variables to be referenced later on with their new values after the first initialized procedure..
         
-
         # STEP 1: Coordinates for the 3 outer selections were determined.
         # Created an empty list of outer coordinates of the circle 
         ## values will be appended to this in the function referenced in analyzing the first image
@@ -135,7 +98,6 @@ class FlyAlign:
         self.outer_color = (255,0,0)
 
         # STEP 2: The outer coordinates were then utilized with the circle functions to compute the center coordinates of the circle
-        
         # Created an empty list for the center coordinates
         ## These will be filled in based on the readings from the first image
         self.ctr_crd = []
@@ -146,18 +108,12 @@ class FlyAlign:
         # how thick the circles will be 
         self.thickness = 2
         self.count = 0
-
-
         
     def clean_up(self):
         cv2.destroyAllWindows()
 
     def callback(self,data): 
-        
         self.queue.put(data)
-        
-        #rospy.logwarn('printing queue_size')
-        #rospy.logwarn(np.shape(tst))
 
 ################### CIRCLE FUNCTIONS ########################
     # STEP 1: GET OUTER COORDS
@@ -243,8 +199,6 @@ class FlyAlign:
             # Pull all new data from queue
             new_image_list = []
            
-            # if self.current_led_position==149:
-            #     break
             while True:
                 try:
                     ros_image = self.queue.get_nowait()
@@ -321,7 +275,6 @@ class FlyAlign:
                         #print(radius)
                         cv2.circle(self.cv_image, self.ctr_crd, radius, self.main_color, self.thickness)
                     cv2.imshow('raw image',self.cv_image)
-                        #cv2.imshow('rotated image', self.angle_data['rotated_image'])
                     rospy.sleep(0.001)
                     cv2.waitKey(1)
 # ---------------------------------------------------------------------------------------
