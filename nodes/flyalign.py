@@ -291,7 +291,7 @@ class ImageConverter:
                     for each in z:
                         zlst.append(int(str(each).split('.')[0]))
                     zlst[1]=zlst[1]*-1
-                    print(zlst)
+                    #print(zlst)
 
                     #  CENTER COORDS
                     self.ctr_crd  = zlst
@@ -299,7 +299,7 @@ class ImageConverter:
                     ### Using the Distance Equation
                     r = np.sqrt(((self.x1-self.ctr_crd[0])**2)+((self.y1-self.ctr_crd[1])**2))
                     self.main_rad = int(r)
-                    print(f"Radius (px): {self.main_rad}")
+                    #print(f"Radius (px): {self.main_rad}")
 
                 else:
                     try:
@@ -380,7 +380,7 @@ class ImageConverter:
                     for circle in circle_array:
                         ## 
                         radius = radius //2
-                        print(radius)
+                        #print(radius)
                         cv2.circle(self.cv_image, self.ctr_crd, radius, self.main_color, self.thickness)
                     cv2.imshow('raw image',self.cv_image)
                         #cv2.imshow('rotated image', self.angle_data['rotated_image'])
