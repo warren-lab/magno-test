@@ -6,6 +6,9 @@
 - roscore
 - start pylon camera node <br> `roslaunch pylon_camera pylon_camera_node.launch`
 - any time, you can see the output of camera <br> `rqt_image_view`
+
+- align the position of the fly <br> `rosrun magno_test flyalign.py`
+
 - launch led service <br> `roslaunch basic_led_strip_ros basic_led_strip.launch`
 
 - to test lights <br> `rosrun basic_led_strip_ros test_service.py`
