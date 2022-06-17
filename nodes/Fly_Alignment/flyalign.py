@@ -30,9 +30,6 @@ with a continuously updating image with the appropriate circles drawn.
 
 """
 
-
-from __future__ import print_function
-
 import roslib
 import sys
 import rospy
