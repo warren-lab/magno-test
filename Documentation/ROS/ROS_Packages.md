@@ -104,3 +104,12 @@ roslaunch basic_led_strip_ros basic_led_strip.launch
                 ```
                 python3 -m modernize -w [filename.py]
                 ```
+
+12. Test LED Connection:
+    * Run the following command in a separate terminal window after the basic_led_strip_node has been launched.
+
+    ```
+    rosrun rosrun basic_led_strip_ros test_service.py
+    ``` 
+    * If no LED lights turn on then check the connections that were made back in the LED_Setup section. Reference the diagram as well to be sure that the wiring is appropriately configured. 
+
