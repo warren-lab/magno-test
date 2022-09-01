@@ -24,3 +24,7 @@ The above launch file starts file writing node, twyg_control.py, **AND** the led
 **Note that fly name is set in the launch file**
    <br> File-writing stops at end of experiment.
  
+ - run analysis for today's flights
+ <br> 'cd python_packages/magno_analysis' <br><br>
+ <br> 'python3 mag_analysis2.py' <br><br>
+ 
