@@ -1,4 +1,4 @@
-# Guide to Setting up ROS for Ubuntu 20.04
+# Lab Guide to Setting up ROS for Ubuntu 20.04
 > This guide will walk through the set up procedure for how to Set Up ROS on a machine using Ubuntu 20.04 LTS
 
 
